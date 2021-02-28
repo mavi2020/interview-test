@@ -3,6 +3,8 @@ package com.surena.interview.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 public class UserDto {
@@ -11,6 +13,6 @@ public class UserDto {
     private String password;
     private String firstName;
     private String lastName;
-    private String createDate;
-    private String modifiedDate;
+    private Date createDate;
+    private Date modifiedDate;
 }
