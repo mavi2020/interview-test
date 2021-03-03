@@ -7,10 +7,12 @@ import com.surena.interview.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 
 @Service
+@Transactional
 public class UserService implements IUserService {
     @Autowired
     private UserRepository userRepository;
@@ -30,12 +32,12 @@ public class UserService implements IUserService {
 
     @Override
     public void deleteByUsername(String userName) {
-
+        userRepository.deleteByUsername(userName);
     }
 
     @Override
     public void deleteById(long id) {
-
+        userRepository.deleteById(id);
     }
 
     @Override
