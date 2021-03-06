@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -52,16 +54,50 @@ public class UserService implements IUserService {
 
     @Override
     public List<UserDto> getAll() {
-        return null;
+        List<User> userList = userRepository.findAll();
+        List<UserDto> userDTOList = new ArrayList<>();
+        UserDto userDTO;
+        for (User user : userList) {
+            userDTO = new UserDto();
+            userDTO.setId(user.getId());
+            userDTO.setUsername(user.getUsername());
+            userDTO.setFirstName(user.getFirstName());
+            userDTO.setLastName(user.getLastName());
+            userDTOList.add(userDTO);
+        }
+        return userDTOList;
     }
 
     @Override
     public UserDto getById(long id) {
-        return null;
+        Optional<User> byId = userRepository.findById(id);
+        UserDto userDto = new UserDto();
+        if (byId.isPresent()) {
+            User user = byId.get();
+            userDto.setId(user.getId());
+            userDto.setUsername(user.getUsername());
+            userDto.setFirstName(user.getFirstName());
+            userDto.setLastName(user.getLastName());
+            userDto.setCreateDate(user.getCreateDate());
+            userDto.setModifiedDate(user.getModifiedDate());
+            return userDto;
+        } else {
+            return null;
+        }
     }
 
     @Override
     public UserDto getByUsername(String userName) {
-        return null;
+        User byUserName = userRepository.findByUsername(userName);
+        UserDto userDto = new UserDto();
+        if (byUserName != null) {
+            userDto.setId(byUserName.getId());
+            userDto.setUsername(byUserName.getUsername());
+            userDto.setFirstName(byUserName.getFirstName());
+            userDto.setLastName(byUserName.getLastName());
+            userDto.setCreateDate(byUserName.getCreateDate());
+            userDto.setModifiedDate(byUserName.getModifiedDate());
+        }
+        return userDto;
     }
 }
