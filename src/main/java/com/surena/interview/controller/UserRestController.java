@@ -6,7 +6,6 @@ import com.surena.interview.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +24,11 @@ public class UserRestController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody UserDto request) {
         return new ResponseEntity<>(iUserService.update(id, request), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/password/{id}")
+    public ResponseEntity<Boolean> changePassword(@PathVariable Long id, @RequestBody ChangePasswordDto request) {
+        return new ResponseEntity<>(iUserService.changePassword(id, request), HttpStatus.OK);
     }
 
     @GetMapping(value = "/users/")

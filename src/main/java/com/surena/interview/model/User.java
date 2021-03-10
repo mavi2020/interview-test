@@ -2,6 +2,8 @@ package com.surena.interview.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -15,10 +17,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "user_name",length = 20)
+    @Column(name = "user_name", length = 20)
     private String username;
 
-    @Column(name = "password",length = 20)
+    @Column(name = "password", length = 20)
     private String password;
 
     @Column(name = "first_name", length = 50)
@@ -28,9 +30,11 @@ public class User {
     private String lastName;
 
     @Column(name = "create_date")
+    @CreationTimestamp
     private Date createDate;
 
     @Column(name = "modified_date")
+    @UpdateTimestamp
     private Date modifiedDate;
 
 }

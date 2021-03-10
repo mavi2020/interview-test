@@ -26,9 +26,10 @@ public class UserService implements IUserService {
         user.setLastName(request.getLastName());
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
-        user.setCreateDate(new Date());
+        //user.setCreateDate(new Date());
         user = userRepository.save(user);
         request.setId(user.getId());
+        request.setCreateDate(user.getCreateDate());
         return request;
     }
 
@@ -44,22 +45,33 @@ public class UserService implements IUserService {
 
     @Override
     public UserDto update(long id, UserDto request) {
-        Optional<User> byId= userRepository.findById(id);
-        UserDto userDto=new UserDto();
-        if(byId.isPresent()){
-            User user=new User();
+        Optional<User> byId = userRepository.findById(id);
+        UserDto userDto = new UserDto();
+        if (byId.isPresent()) {
+            User user = new User();
             user.setUsername(request.getUsername());
             user.setFirstName(request.getFirstName());
             user.setLastName(request.getLastName());
             user.setId(id);
-            user=userRepository.save(user);
+            user = userRepository.save(user);
             request.setId(id);
+            request.setModifiedDate(user.getModifiedDate());
         }
         return request;
     }
 
     @Override
     public boolean changePassword(long id, ChangePasswordDto request) {
+        Optional<User> byId = userRepository.findByUsername(request.getUsername());
+        if (byId.isPresent()) {
+            User oldUser = byId.get();
+            if (!oldUser.getPassword().equals(request.getOldPassword())) {
+                return false;
+            }
+            oldUser.setPassword(request.getNewPassword());
+            userRepository.save(oldUser);
+            return true;
+        }
         return false;
     }
 
@@ -99,9 +111,10 @@ public class UserService implements IUserService {
 
     @Override
     public UserDto getByUsername(String userName) {
-        User byUserName = userRepository.findByUsername(userName);
+        Optional<User> optionalUserName = userRepository.findByUsername(userName);
         UserDto userDto = new UserDto();
-        if (byUserName != null) {
+        if (optionalUserName.isPresent()) {
+            User byUserName = optionalUserName.get();
             userDto.setId(byUserName.getId());
             userDto.setUsername(byUserName.getUsername());
             userDto.setFirstName(byUserName.getFirstName());
