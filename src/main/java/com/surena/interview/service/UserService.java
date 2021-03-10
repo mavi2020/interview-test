@@ -44,7 +44,18 @@ public class UserService implements IUserService {
 
     @Override
     public UserDto update(long id, UserDto request) {
-        return null;
+        Optional<User> byId= userRepository.findById(id);
+        UserDto userDto=new UserDto();
+        if(byId.isPresent()){
+            User user=new User();
+            user.setUsername(request.getUsername());
+            user.setFirstName(request.getFirstName());
+            user.setLastName(request.getLastName());
+            user.setId(id);
+            user=userRepository.save(user);
+            request.setId(id);
+        }
+        return request;
     }
 
     @Override
