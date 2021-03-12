@@ -1,5 +1,6 @@
 package com.surena.interview.service;
 
+import com.surena.interview.mapper.UserMapper;
 import com.surena.interview.model.ChangePasswordDto;
 import com.surena.interview.model.User;
 import com.surena.interview.model.UserDto;
@@ -9,19 +10,26 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @Transactional
 public class UserService implements IUserService {
+
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserMapper userMapper;
+// comment one line -> Ctrl + /
+// comment multiple lines -> Ctrl +Shift + /
+
+
     @Override
     public UserDto create(UserDto request) {
-        User user = new User();
+        User user = userMapper.userDtoToUser(request);
+    /*    User user = new User();
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setUsername(request.getUsername());
@@ -30,7 +38,8 @@ public class UserService implements IUserService {
         user = userRepository.save(user);
         request.setId(user.getId());
         request.setCreateDate(user.getCreateDate());
-        return request;
+        return request;*/
+        return userMapper.userToUserDto(userRepository.save(user));
     }
 
     @Override
@@ -48,16 +57,19 @@ public class UserService implements IUserService {
         Optional<User> byId = userRepository.findById(id);
         UserDto userDto = new UserDto();
         if (byId.isPresent()) {
-            User user = new User();
+            User user = userMapper.userDtoToUser(request);
+            /*User user = new User();
             user.setUsername(request.getUsername());
             user.setFirstName(request.getFirstName());
-            user.setLastName(request.getLastName());
+            user.setLastName(request.getLastName());*/
             user.setId(id);
-            user = userRepository.save(user);
+            /*user = userRepository.save(user);
             request.setId(id);
-            request.setModifiedDate(user.getModifiedDate());
+            request.setModifiedDate(user.getModifiedDate());*/
+            return userMapper.userToUserDto(userRepository.save(user));
+        } else {
+            return null;
         }
-        return request;
     }
 
     @Override
@@ -81,11 +93,13 @@ public class UserService implements IUserService {
         List<UserDto> userDTOList = new ArrayList<>();
         UserDto userDTO;
         for (User user : userList) {
-            userDTO = new UserDto();
+
+            userDTO = userMapper.userToUserDto(user);
+            /*userDTO = new UserDto();
             userDTO.setId(user.getId());
             userDTO.setUsername(user.getUsername());
             userDTO.setFirstName(user.getFirstName());
-            userDTO.setLastName(user.getLastName());
+            userDTO.setLastName(user.getLastName());*/
             userDTOList.add(userDTO);
         }
         return userDTOList;
@@ -94,15 +108,16 @@ public class UserService implements IUserService {
     @Override
     public UserDto getById(long id) {
         Optional<User> byId = userRepository.findById(id);
-        UserDto userDto = new UserDto();
+        /*UserDto userDto = new UserDto();*/
         if (byId.isPresent()) {
-            User user = byId.get();
+            UserDto userDto = userMapper.userToUserDto(byId.get());
+            /*User user = byId.get();
             userDto.setId(user.getId());
             userDto.setUsername(user.getUsername());
             userDto.setFirstName(user.getFirstName());
             userDto.setLastName(user.getLastName());
             userDto.setCreateDate(user.getCreateDate());
-            userDto.setModifiedDate(user.getModifiedDate());
+            userDto.setModifiedDate(user.getModifiedDate());*/
             return userDto;
         } else {
             return null;
