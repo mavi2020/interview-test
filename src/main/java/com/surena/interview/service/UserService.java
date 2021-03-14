@@ -1,16 +1,17 @@
 package com.surena.interview.service;
 
-import com.surena.interview.mapper.UserMapper;
 import com.surena.interview.dto.ChangePasswordDto;
-import com.surena.interview.model.User;
 import com.surena.interview.dto.UserDto;
+import com.surena.interview.exception.BadRequestException;
+import com.surena.interview.exception.NotFoundException;
+import com.surena.interview.mapper.UserMapper;
+import com.surena.interview.model.User;
 import com.surena.interview.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,9 +29,8 @@ public class UserService implements IUserService {
     @Transactional
     @Override
     public UserDto create(UserDto request) {
-        if(getByUsername(request.getUsername())!=null){
-            //todo : throw suitable exception
-            throw new UserNotFoundException("fsdfs");
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new BadRequestException("Username is repetitive");
         }
         User user = userMapper.userDtoToUser(request);//ToDo unique UserName check
 
@@ -66,7 +66,7 @@ public class UserService implements IUserService {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            if((!request.getFirstName().isEmpty() && !request.getFirstName().equals(user.getFirstName())) ||
+            if ((!request.getFirstName().isEmpty() && !request.getFirstName().equals(user.getFirstName())) ||
                     !request.getLastName().isEmpty() ||
                     !request.getUsername().isEmpty()) {
                 if (!request.getFirstName().isEmpty()) {
@@ -80,12 +80,12 @@ public class UserService implements IUserService {
                 }
                 user = userRepository.save(user);
                 return userMapper.userToUserDto(user);
-            }else {
+            } else {
                 //todo : return exception handler !!!
-                return null;
+                throw new BadRequestException("request data is not changed !");
             }
         } else {
-            throw new UserNotFoundException("id: " + id);
+            throw new NotFoundException("id: " + id);
         }
     }
 

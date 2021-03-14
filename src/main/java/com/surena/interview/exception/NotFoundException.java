@@ -1,11 +1,12 @@
-package com.surena.interview.service;
+package com.surena.interview.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-class UserNotFoundException extends RuntimeException {
-    public UserNotFoundException(String message) {
+public
+class NotFoundException extends RuntimeException {
+    public NotFoundException(String message) {
         super(message);
     }
 }
