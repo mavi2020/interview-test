@@ -1,7 +1,7 @@
 package com.surena.interview.controller;
 
-import com.surena.interview.model.ChangePasswordDto;
-import com.surena.interview.model.UserDto;
+import com.surena.interview.dto.ChangePasswordDto;
+import com.surena.interview.dto.UserDto;
 import com.surena.interview.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,44 +16,44 @@ public class UserRestController {
     @Autowired
     private IUserService iUserService;
 
-    @PostMapping(value = "/")
+    @PostMapping(value = "/create")
     public ResponseEntity<UserDto> create(@RequestBody UserDto request) {
         return new ResponseEntity<>(iUserService.create(request), HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/update/{id}")//ToDo remove id from url
     public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody UserDto request) {
         return new ResponseEntity<>(iUserService.update(id, request), HttpStatus.OK);
     }
 
-    @PutMapping(value = "/password/{id}")
+    @PutMapping(value = "/changePassword/{id}")//ToDo remove id
     public ResponseEntity<Boolean> changePassword(@PathVariable Long id, @RequestBody ChangePasswordDto request) {
         return new ResponseEntity<>(iUserService.changePassword(id, request), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/users/")
+    @GetMapping(value = "/getAllUsers/")
     public ResponseEntity<List<UserDto>> getAll() {
         return new ResponseEntity<>(iUserService.getAll(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/id/{id}")
+    @GetMapping(value = "/getById/{id}")
     public ResponseEntity<UserDto> getById(@PathVariable Long id) {
         return new ResponseEntity<>(iUserService.getById(id), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/user/{userName}")
+    @GetMapping(value = "/getByUserName/{userName}")
     public ResponseEntity<UserDto> getByUsername(@PathVariable String userName) {
         return new ResponseEntity<>(iUserService.getByUsername(userName), HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         iUserService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     // http://localhost:8080/api/users/2
-    @DeleteMapping(value = "/user-name/{username}")
+    @DeleteMapping(value = "/deleteByUserName/{username}")
     public ResponseEntity<Void> deleteByUsername(@PathVariable String username) {
         iUserService.deleteByUsername(username);
         return new ResponseEntity<>(HttpStatus.OK);

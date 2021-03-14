@@ -1,20 +1,20 @@
 package com.surena.interview.service;
 
 import com.surena.interview.mapper.UserMapper;
-import com.surena.interview.model.ChangePasswordDto;
+import com.surena.interview.dto.ChangePasswordDto;
 import com.surena.interview.model.User;
-import com.surena.interview.model.UserDto;
+import com.surena.interview.dto.UserDto;
 import com.surena.interview.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class UserService implements IUserService {
 
     @Autowired
@@ -25,10 +25,15 @@ public class UserService implements IUserService {
 // comment one line -> Ctrl + /
 // comment multiple lines -> Ctrl +Shift + /
 
-
+    @Transactional
     @Override
     public UserDto create(UserDto request) {
-        User user = userMapper.userDtoToUser(request);
+        if(getByUsername(request.getUsername())!=null){
+            //todo : throw suitable exception
+            throw new UserNotFoundException("fsdfs");
+        }
+        User user = userMapper.userDtoToUser(request);//ToDo unique UserName check
+
     /*    User user = new User();
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
@@ -39,44 +44,56 @@ public class UserService implements IUserService {
         request.setId(user.getId());
         request.setCreateDate(user.getCreateDate());
         return request;*/
-        return userMapper.userToUserDto(userRepository.save(user));
+        return userMapper.userToUserDto(userRepository.save(user));//ToDo make 2 line clean code
     }
 
+
+    @Transactional
     @Override
-    public void deleteByUsername(String userName) {
+    public void deleteByUsername(String userName) {//ToDo getByUserName
         userRepository.deleteByUsername(userName);
     }
 
+    @Transactional
     @Override
-    public void deleteById(long id) {
+    public void deleteById(long id) {//Todo getById
         userRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
     public UserDto update(long id, UserDto request) {
-        Optional<User> byId = userRepository.findById(id);
-        UserDto userDto = new UserDto();
-        if (byId.isPresent()) {
-            User user = userMapper.userDtoToUser(request);
-            /*User user = new User();
-            user.setUsername(request.getUsername());
-            user.setFirstName(request.getFirstName());
-            user.setLastName(request.getLastName());*/
-            user.setId(id);
-            /*user = userRepository.save(user);
-            request.setId(id);
-            request.setModifiedDate(user.getModifiedDate());*/
-            return userMapper.userToUserDto(userRepository.save(user));
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if((!request.getFirstName().isEmpty() && !request.getFirstName().equals(user.getFirstName())) ||
+                    !request.getLastName().isEmpty() ||
+                    !request.getUsername().isEmpty()) {
+                if (!request.getFirstName().isEmpty()) {
+                    user.setFirstName(request.getFirstName());
+                }
+                if (!request.getLastName().isEmpty()) {
+                    user.setLastName(request.getLastName());
+                }
+                if (!request.getUsername().isEmpty()) {
+                    user.setUsername(request.getUsername());
+                }
+                user = userRepository.save(user);
+                return userMapper.userToUserDto(user);
+            }else {
+                //todo : return exception handler !!!
+                return null;
+            }
         } else {
-            return null;
+            throw new UserNotFoundException("id: " + id);
         }
     }
 
     @Override
     public boolean changePassword(long id, ChangePasswordDto request) {
-        Optional<User> byId = userRepository.findByUsername(request.getUsername());
-        if (byId.isPresent()) {
-            User oldUser = byId.get();
+        Optional<User> userOptional = userRepository.findByUsername(request.getUsername());//optionalUser
+        if (userOptional.isPresent()) {
+            User oldUser = userOptional.get();//user
             if (!oldUser.getPassword().equals(request.getOldPassword())) {
                 return false;
             }
@@ -90,7 +107,7 @@ public class UserService implements IUserService {
     @Override
     public List<UserDto> getAll() {
         List<User> userList = userRepository.findAll();
-        List<UserDto> userDTOList = new ArrayList<>();
+        List<UserDto> userDTOList = new ArrayList<>(); //use in mapper userLIst , userDtoList
         UserDto userDTO;
         for (User user : userList) {
 
@@ -110,7 +127,7 @@ public class UserService implements IUserService {
         Optional<User> byId = userRepository.findById(id);
         /*UserDto userDto = new UserDto();*/
         if (byId.isPresent()) {
-            UserDto userDto = userMapper.userToUserDto(byId.get());
+            return userMapper.userToUserDto(byId.get());
             /*User user = byId.get();
             userDto.setId(user.getId());
             userDto.setUsername(user.getUsername());
@@ -118,8 +135,8 @@ public class UserService implements IUserService {
             userDto.setLastName(user.getLastName());
             userDto.setCreateDate(user.getCreateDate());
             userDto.setModifiedDate(user.getModifiedDate());*/
-            return userDto;
-        } else {
+//            return userDto;
+        } else {//return exception
             return null;
         }
     }

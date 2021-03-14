@@ -1,4 +1,4 @@
-package com.surena.interview.model;
+package com.surena.interview.dto;
 
 import lombok.Getter;
 import lombok.Setter;

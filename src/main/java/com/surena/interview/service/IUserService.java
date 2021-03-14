@@ -1,7 +1,7 @@
 package com.surena.interview.service;
 
-import com.surena.interview.model.ChangePasswordDto;
-import com.surena.interview.model.UserDto;
+import com.surena.interview.dto.ChangePasswordDto;
+import com.surena.interview.dto.UserDto;
 
 import java.util.List;
 
