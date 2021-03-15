@@ -30,10 +30,11 @@ public class UserService implements IUserService {
     @Override
     public UserDto create(UserDto request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new BadRequestException("Username is repetitive");
+            throw new BadRequestException("Username is repetitive: " + request.getUsername());
         }
-        User user = userMapper.userDtoToUser(request);//ToDo unique UserName check
-
+        User user = userMapper.userDtoToUser(request);
+        user = userRepository.save(user);
+        return userMapper.userToUserDto(user);
     /*    User user = new User();
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
@@ -44,20 +45,27 @@ public class UserService implements IUserService {
         request.setId(user.getId());
         request.setCreateDate(user.getCreateDate());
         return request;*/
-        return userMapper.userToUserDto(userRepository.save(user));//ToDo make 2 line clean code
     }
 
 
     @Transactional
     @Override
-    public void deleteByUsername(String userName) {//ToDo getByUserName
-        userRepository.deleteByUsername(userName);
+    public void deleteByUsername(String userName) {
+        if (userRepository.findByUsername(userName).isPresent()) {
+            userRepository.deleteByUsername(userName);
+        } else {
+            throw new NotFoundException("username not found");
+        }
     }
 
     @Transactional
     @Override
     public void deleteById(long id) {//Todo getById
-        userRepository.deleteById(id);
+        if (userRepository.findById(id).isPresent()) {
+            userRepository.deleteById(id);
+        } else {
+            throw new NotFoundException("user id not found: " + id);
+        }
     }
 
     @Transactional
@@ -81,7 +89,6 @@ public class UserService implements IUserService {
                 user = userRepository.save(user);
                 return userMapper.userToUserDto(user);
             } else {
-                //todo : return exception handler !!!
                 throw new BadRequestException("request data is not changed !");
             }
         } else {
@@ -91,34 +98,36 @@ public class UserService implements IUserService {
 
     @Override
     public boolean changePassword(long id, ChangePasswordDto request) {
-        Optional<User> userOptional = userRepository.findByUsername(request.getUsername());//optionalUser
+        Optional<User> userOptional = userRepository.findByUsername(request.getUsername());
         if (userOptional.isPresent()) {
             User oldUser = userOptional.get();//user
             if (!oldUser.getPassword().equals(request.getOldPassword())) {
-                return false;
+                throw new BadRequestException("old password is not correct");
             }
             oldUser.setPassword(request.getNewPassword());
             userRepository.save(oldUser);
             return true;
+        } else {
+            throw new NotFoundException("username not exist: " + request.getUsername());
         }
-        return false;
     }
 
     @Override
     public List<UserDto> getAll() {
+//        return userMapper.userToUserDto(userRepository.findAll());
         List<User> userList = userRepository.findAll();
-        List<UserDto> userDTOList = new ArrayList<>(); //use in mapper userLIst , userDtoList
-        UserDto userDTO;
-        for (User user : userList) {
-
+        List<UserDto> userDTOList = userMapper.userToUserDto(userList);
+//        List<UserDto> userDTOList = new ArrayList<>();
+//        UserDto userDTO;
+       /* for (User user : userList) {
             userDTO = userMapper.userToUserDto(user);
-            /*userDTO = new UserDto();
+            userDTOList.add(userDTO);
+       */     /*userDTO = new UserDto();
             userDTO.setId(user.getId());
             userDTO.setUsername(user.getUsername());
             userDTO.setFirstName(user.getFirstName());
             userDTO.setLastName(user.getLastName());*/
-            userDTOList.add(userDTO);
-        }
+//        }
         return userDTOList;
     }
 
@@ -136,8 +145,8 @@ public class UserService implements IUserService {
             userDto.setCreateDate(user.getCreateDate());
             userDto.setModifiedDate(user.getModifiedDate());*/
 //            return userDto;
-        } else {//return exception
-            return null;
+        } else {
+            throw new NotFoundException("id not found: " + id);
         }
     }
 

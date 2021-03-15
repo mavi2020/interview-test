@@ -20,7 +20,7 @@ public class CustomizedResponseEntityHandlerException extends ResponseEntityExce
                 new ExceptionResponse(new Date(), ex.getMessage(),
                         request.getDescription(false));
 
-        return  new ResponseEntity(exceptionResponse , HttpStatus.BAD_REQUEST);
+        return  new ResponseEntity(exceptionResponse , HttpStatus.NOT_FOUND);
 
     }
 
@@ -30,7 +30,7 @@ public class CustomizedResponseEntityHandlerException extends ResponseEntityExce
                 new ExceptionResponse(new Date(), ex.getMessage(),
                         request.getDescription(false));
 
-        return  new ResponseEntity(exceptionResponse , HttpStatus.NOT_FOUND);
+        return  new ResponseEntity(exceptionResponse , HttpStatus.BAD_REQUEST);
 
     }
 

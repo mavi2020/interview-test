@@ -1,9 +1,11 @@
 package com.surena.interview.exception;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Date;
 
+//@AllArgsConstructor
 @Getter
 public class ExceptionResponse {
     private Date timestamp;
