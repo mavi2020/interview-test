@@ -23,7 +23,7 @@ public class UserServiceTest {
     public void getMockingGetUser() {
         UserDto userDto = new UserDto();
         Mockito
-                .when(restTemplate.getForEntity("http://localhost:8080/api/users/1", UserDto.class))
+                .when(restTemplate.getForEntity("http://localhost:8080/api/users/getById/1", UserDto.class))
                 .thenReturn(new ResponseEntity(userDto, HttpStatus.NOT_FOUND));
 
     }
