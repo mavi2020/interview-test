@@ -39,7 +39,13 @@ public class UserService implements IUserService {
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
         user = userRepository.save(user);
-        return userMapper.userToUserDto(user);
+
+        request.setId(user.getId());
+        request.setCreateDate(user.getCreateDate());
+        request.setModifiedDate(user.getModifiedDate());
+//        return userMapper.userToUserDto(user);
+        return request;
+
     }
 
     @Transactional
