@@ -32,11 +32,15 @@ public class UserService implements IUserService {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new BadRequestException("Username is repetitive: " + request.getUsername());
         }
-        User user = userMapper.userDtoToUser(request);
+        //User user = userMapper.userDtoToUser(request);
+        User user  = new User();
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setUsername(request.getUsername());
+        user.setPassword(request.getPassword());
         user = userRepository.save(user);
         return userMapper.userToUserDto(user);
     }
-
 
     @Transactional
     @Override
@@ -82,12 +86,12 @@ public class UserService implements IUserService {
                 throw new BadRequestException("request data is not changed !");
             }
         } else {
-            throw new NotFoundException("id: " + request.getId()+" Not Found.");
+            throw new NotFoundException("id: " + request.getId() + " Not Found.");
         }
     }
 
     @Override
-    public boolean changePassword(long id, ChangePasswordDto request) {
+    public boolean changePassword(ChangePasswordDto request) {
         Optional<User> userOptional = userRepository.findByUsername(request.getUsername());
         if (userOptional.isPresent()) {
             User oldUser = userOptional.get();//user

@@ -6,18 +6,20 @@ import com.surena.interview.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/users")
+@Validated
 public class UserRestController {
     @Autowired
     private IUserService iUserService;
 
     @PostMapping(value = "/create")
-    public ResponseEntity<UserDto> create(@RequestBody UserDto request) {
+    public ResponseEntity<UserDto> create(@Validated @RequestBody UserDto request) {
         return new ResponseEntity<>(iUserService.create(request), HttpStatus.CREATED);
     }
 
@@ -26,9 +28,9 @@ public class UserRestController {
         return new ResponseEntity<>(iUserService.update(request), HttpStatus.OK);
     }
 
-    @PutMapping(value = "/changePassword/{id}")//ToDo remove id
-    public ResponseEntity<Boolean> changePassword(@PathVariable Long id, @RequestBody ChangePasswordDto request) {
-        return new ResponseEntity<>(iUserService.changePassword(id, request), HttpStatus.OK);
+    @PutMapping(value = "/changePassword")
+    public ResponseEntity<Boolean> changePassword(@RequestBody ChangePasswordDto request) {
+        return new ResponseEntity<>(iUserService.changePassword(request), HttpStatus.OK);
     }
 
     @GetMapping(value = "/getAllUsers/")

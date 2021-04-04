@@ -35,4 +35,13 @@ public class UserDto {
 
     private Date createDate;
     private Date modifiedDate;
+
+    public UserDto(){}
+
+    public UserDto(String username, String password, String firstName, String lastName) {
+        this.username = username;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 }

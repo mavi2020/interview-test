@@ -14,7 +14,7 @@ public interface IUserService {
 
     UserDto update(UserDto request);
 
-    boolean changePassword(long id, ChangePasswordDto request);
+    boolean changePassword(ChangePasswordDto request);
 
     List<UserDto> getAll();
 
