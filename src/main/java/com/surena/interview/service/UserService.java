@@ -65,8 +65,8 @@ public class UserService implements IUserService {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             if ((!request.getFirstName().isEmpty() && !request.getFirstName().equals(user.getFirstName())) ||
-                    !request.getLastName().isEmpty() ||
-                    !request.getUsername().isEmpty()) {
+                    (!request.getLastName().isEmpty() && !request.getLastName().equals(user.getLastName())) ||
+                    (!request.getUsername().isEmpty() && !request.getUsername().equals(user.getPassword()))) {
                 if (!request.getFirstName().isEmpty()) {
                     user.setFirstName(request.getFirstName());
                 }
@@ -82,7 +82,7 @@ public class UserService implements IUserService {
                 throw new BadRequestException("request data is not changed !");
             }
         } else {
-            throw new NotFoundException("id: " + id);
+            throw new NotFoundException("id: " + request.getId()+" Not Found.");
         }
     }
 
