@@ -35,16 +35,6 @@ public class UserService implements IUserService {
         User user = userMapper.userDtoToUser(request);
         user = userRepository.save(user);
         return userMapper.userToUserDto(user);
-    /*    User user = new User();
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        //user.setCreateDate(new Date());
-        user = userRepository.save(user);
-        request.setId(user.getId());
-        request.setCreateDate(user.getCreateDate());
-        return request;*/
     }
 
 
@@ -70,8 +60,8 @@ public class UserService implements IUserService {
 
     @Transactional
     @Override
-    public UserDto update(long id, UserDto request) {
-        Optional<User> optionalUser = userRepository.findById(id);
+    public UserDto update(UserDto request) {
+        Optional<User> optionalUser = userRepository.findById(request.getId());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             if ((!request.getFirstName().isEmpty() && !request.getFirstName().equals(user.getFirstName())) ||
@@ -114,37 +104,16 @@ public class UserService implements IUserService {
 
     @Override
     public List<UserDto> getAll() {
-//        return userMapper.userToUserDto(userRepository.findAll());
         List<User> userList = userRepository.findAll();
         List<UserDto> userDTOList = userMapper.userToUserDto(userList);
-//        List<UserDto> userDTOList = new ArrayList<>();
-//        UserDto userDTO;
-       /* for (User user : userList) {
-            userDTO = userMapper.userToUserDto(user);
-            userDTOList.add(userDTO);
-       */     /*userDTO = new UserDto();
-            userDTO.setId(user.getId());
-            userDTO.setUsername(user.getUsername());
-            userDTO.setFirstName(user.getFirstName());
-            userDTO.setLastName(user.getLastName());*/
-//        }
         return userDTOList;
     }
 
     @Override
     public UserDto getById(long id) {
         Optional<User> byId = userRepository.findById(id);
-        /*UserDto userDto = new UserDto();*/
         if (byId.isPresent()) {
             return userMapper.userToUserDto(byId.get());
-            /*User user = byId.get();
-            userDto.setId(user.getId());
-            userDto.setUsername(user.getUsername());
-            userDto.setFirstName(user.getFirstName());
-            userDto.setLastName(user.getLastName());
-            userDto.setCreateDate(user.getCreateDate());
-            userDto.setModifiedDate(user.getModifiedDate());*/
-//            return userDto;
         } else {
             throw new NotFoundException("id not found: " + id);
         }

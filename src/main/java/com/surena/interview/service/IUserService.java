@@ -12,7 +12,7 @@ public interface IUserService {
 
     void deleteById(long id);
 
-    UserDto update(long id, UserDto request);
+    UserDto update(UserDto request);
 
     boolean changePassword(long id, ChangePasswordDto request);
 

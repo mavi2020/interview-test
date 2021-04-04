@@ -21,9 +21,9 @@ public class UserRestController {
         return new ResponseEntity<>(iUserService.create(request), HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/update/{id}")//ToDo remove id from url
-    public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody UserDto request) {
-        return new ResponseEntity<>(iUserService.update(id, request), HttpStatus.OK);
+    @PutMapping(value = "/update")
+    public ResponseEntity<UserDto> update(@RequestBody UserDto request) {
+        return new ResponseEntity<>(iUserService.update(request), HttpStatus.OK);
     }
 
     @PutMapping(value = "/changePassword/{id}")//ToDo remove id
