@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest
 public class UserControllerTest {
@@ -64,7 +63,7 @@ public class UserControllerTest {
     @Test
     public void deleteByIdTest() {
         ResponseEntity response = userRestController.delete(1L);
-        Assert.assertEquals(new ResponseEntity(HttpStatus.OK),response);
+        Assert.assertEquals(new ResponseEntity(HttpStatus.OK), response);
     }
 
 
@@ -72,20 +71,20 @@ public class UserControllerTest {
     @Test
     public void getAllTest() {
         List<UserDto> userDtoList = userRestController.getAll().getBody();
-        Assert.assertEquals(1,userDtoList.size());
+        Assert.assertEquals(1, userDtoList.size());
     }
 
     @Transactional
     @Test
     public void getByIdTest() {
         UserDto userDto = userRestController.getById(1l).getBody();
-        Assert.assertEquals("mavi",userDto.getUsername());
+        Assert.assertEquals("mavi", userDto.getUsername());
     }
 
     @Transactional
     @Test
     public void getByUsernameTest() {
         UserDto userDto = userRestController.getByUsername("mavi").getBody();
-        Assert.assertEquals("shima",userDto.getFirstName());
+        Assert.assertEquals("shima", userDto.getFirstName());
     }
 }
