@@ -29,22 +29,21 @@ public class UserService implements IUserService {
     @Transactional
     @Override
     public UserDto create(UserDto request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new BadRequestException("Username is repetitive: " + request.getUsername());
-        }
-        //User user = userMapper.userDtoToUser(request);
-        User user  = new User();
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        user = userRepository.save(user);
+        if (!userRepository.findByUsername(request.getUsername()).isPresent()) {//User user = userMapper.userDtoToUser(request);
+            User user = new User();
+            user.setFirstName(request.getFirstName());
+            user.setLastName(request.getLastName());
+            user.setUsername(request.getUsername());
+            user.setPassword(request.getPassword());
+            user = userRepository.save(user);
 
-        request.setId(user.getId());
-        request.setCreateDate(user.getCreateDate());
-        request.setModifiedDate(user.getModifiedDate());
+            request.setId(user.getId());
+            request.setCreateDate(user.getCreateDate());
+            request.setModifiedDate(user.getModifiedDate());
 //        return userMapper.userToUserDto(user);
-        return request;
+            return request;
+        }
+        throw new BadRequestException("Username is repetitive: " + request.getUsername());
 
     }
 
@@ -71,29 +70,27 @@ public class UserService implements IUserService {
     @Transactional
     @Override
     public UserDto update(UserDto request) {
-        Optional<User> optionalUser = userRepository.findById(request.getId());
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if ((!request.getFirstName().isEmpty() && !request.getFirstName().equals(user.getFirstName())) ||
-                    (!request.getLastName().isEmpty() && !request.getLastName().equals(user.getLastName())) ||
-                    (!request.getUsername().isEmpty() && !request.getUsername().equals(user.getPassword()))) {
-                if (!request.getFirstName().isEmpty()) {
-                    user.setFirstName(request.getFirstName());
-                }
-                if (!request.getLastName().isEmpty()) {
-                    user.setLastName(request.getLastName());
-                }
-                if (!request.getUsername().isEmpty()) {
-                    user.setUsername(request.getUsername());
-                }
-                user = userRepository.save(user);
-                return userMapper.userToUserDto(user);
-            } else {
-                throw new BadRequestException("request data is not changed !");
-            }
-        } else {
-            throw new NotFoundException("id: " + request.getId() + " Not Found.");
+        Optional<User> optionalUser = userRepository.findByUsername(request.getUsername());
+        if (!optionalUser.isPresent()) {
+            throw new NotFoundException(String.format("username %s Not Found.", request.getUsername()));
         }
+
+        User user = optionalUser.get();
+        if ((request.getFirstName().isEmpty() || request.getFirstName().equals(user.getFirstName())) &&
+                (request.getLastName().isEmpty() || request.getLastName().equals(user.getLastName()))) {
+            throw new BadRequestException("request data is not changed !");
+        }
+
+        if (!request.getFirstName().isEmpty()) {
+            user.setFirstName(request.getFirstName());
+        }
+
+        if (!request.getLastName().isEmpty()) {
+            user.setLastName(request.getLastName());
+        }
+
+        user = userRepository.save(user);
+        return userMapper.userToUserDto(user);
     }
 
     @Override

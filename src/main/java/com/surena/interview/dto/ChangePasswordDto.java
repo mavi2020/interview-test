@@ -20,4 +20,10 @@ public class ChangePasswordDto {
     @NotBlank(message = "رمز عبور جدید نمی تواند خالی باشد")
     @ApiModelProperty(required = true, example = "123@45")
     private String newPassword;
+
+    public ChangePasswordDto( String username, String oldPassword, String newPassword) {
+        this.username = username;
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
+    }
 }
