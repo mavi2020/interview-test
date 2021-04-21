@@ -1,4 +1,4 @@
-package com.surena.interview;
+package com.surena.interview.service;
 
 import com.surena.interview.dto.UserDto;
 import com.surena.interview.mapper.UserMapper;
